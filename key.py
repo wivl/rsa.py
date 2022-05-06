@@ -135,6 +135,7 @@ def load_private_key():
 
 # 测试  
 if __name__ == "__main__":
+
     generate_key()
     save_public_key()
     save_private_key()
