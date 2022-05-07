@@ -56,7 +56,6 @@ def encrypt(key, message: bytes):
 
     # 将 message 分成 i bytes 的组
     message_blocks = cut_bytes(message, i)
-    print(message_blocks)
 
     cipher = bytes()
 
@@ -77,7 +76,6 @@ def decrypt(key, cipher: bytes):
     i = math.floor(i / 8)
 
     cipher_blocks = cut_bytes(cipher, i + 1)
-    print(cipher_blocks)
 
     message = bytes()
 
@@ -86,7 +84,7 @@ def decrypt(key, cipher: bytes):
         block_in_dec = int(block_in_hex, 16)
         enc = pow(block_in_dec, key[0], key[1])
 
-        message += enc.to_bytes(i, byteorder='big')
+        message += enc.to_bytes(math.ceil(enc.bit_length() / 8), byteorder='big')
     
     return message
         
@@ -125,7 +123,7 @@ if __name__ == "__main__":
     if DEBUG == 2:
         key.load_private_key()
         key.load_public_key()
-        filepath = "hamlet.txt"
+        filepath = "greeting.txt"
         message_file = open(filepath, "rb")
         encrypted_file = open("encrypted.bin", "wb")
     
