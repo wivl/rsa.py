@@ -15,7 +15,7 @@
 ```console
 python3 key.py
 ```
-默认生成 **最大为 16 位的 p 和 q**，你也可以修改 <code>key.py</code> 中 <code>22</code> 行的 <code>KEY_LENGTH</code> 值。**注意：<code>KEY_LENGTH</code> 值过长会导致生成密钥对时间很长，不建议将此值设置太长**
+默认生成 **最大为 2048 位的 p 和 q**，你也可以修改 <code>key.py</code> 中 <code>22</code> 行的 <code>KEY_LENGTH</code> 值。**注意：<code>KEY_LENGTH</code> 值为 2048 时在本机测试的时间开销在 7000s 左右**，其中的素数判断使用的是 [米勒-拉宾素性检验](https://zh.wikipedia.org/zh-cn/%E7%B1%B3%E5%8B%92-%E6%8B%89%E5%AE%BE%E6%A3%80%E9%AA%8C)。
 
 ### 加密
 
