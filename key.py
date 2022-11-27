@@ -16,10 +16,11 @@
 
 
 import math
+import random
 from random import randint
 
 # 最大 key 长度为 16 位, RSA 实际情况下要求更大 bit 的密钥, 但考虑到实际情况下生成大密钥用时太长，所以此处设置为 16 位
-KEY_LENGTH = 16
+KEY_LENGTH = 2048
 
 public_key = ()
 private_key = ()
@@ -29,8 +30,8 @@ q = 0
 n = 0
 
 # 生成素数序列
-N = 2 ** KEY_LENGTH
-PRIMES = [ p for p in  range(2, N) if 0 not in [ p% d for d in range(2, int(math.sqrt(p))+1)] ] 
+# N = 2 ** KEY_LENGTH
+# PRIMES = [ p for p in  range(2, N) if 0 not in [ p% d for d in range(2, int(math.sqrt(p))+1)] ] 
 
 
 def is_prime(p):
@@ -43,14 +44,45 @@ def is_prime(p):
             return False
     return True
 
+def miller_rabin(n, k=40):
 
-def choose_primes():
-    global p
-    global q
-    p = PRIMES[randint(0, len(PRIMES) - 1)]
-    q = PRIMES[randint(0, len(PRIMES) - 1)]
-    while p == q:
-        q = PRIMES[randint(0, len(PRIMES) - 1)]
+    # Implementation uses the Miller-Rabin Primality Test
+    # The optimal number of rounds for this test is 40
+    # See http://stackoverflow.com/questions/6325576/how-many-iterations-of-rabin-miller-should-i-use-for-cryptographic-safe-primes
+    # for justification
+
+    # If number is even, it's a composite number
+
+    if n == 2:
+        return True
+
+    if n % 2 == 0:
+        return False
+
+    r, s = 0, n - 1
+    while s % 2 == 0:
+        r += 1
+        s //= 2
+    for _ in range(k):
+        a = random.randrange(2, n - 1)
+        x = pow(a, s, n)
+        if x == 1 or x == n - 1:
+            continue
+        for _ in range(r - 1):
+            x = pow(x, 2, n)
+            if x == n - 1:
+                break
+        else:
+            return False
+    return True
+
+# def choose_primes():
+#     global p
+#     global q
+#     p = PRIMES[randint(0, len(PRIMES) - 1)]
+#     q = PRIMES[randint(0, len(PRIMES) - 1)]
+#     while p == q:
+#         q = PRIMES[randint(0, len(PRIMES) - 1)]
 
 def generate_coprime():
     global p
@@ -58,7 +90,7 @@ def generate_coprime():
     range_up = 2 ** (KEY_LENGTH - 1)
     p = randint(1, range_up)
     q = randint(1, range_up)
-    while is_prime(p) == False or is_prime(q) == False:
+    while miller_rabin(p) == False or miller_rabin(q) == False:
         p = randint(1, range_up)
         q = randint(1, range_up)
 
@@ -95,7 +127,7 @@ def generate_key():
     global p
     global q
     global n
-    choose_primes()
+    generate_coprime()
     n = p * q
     phi = (p - 1) * (q - 1)
     e = 0
